@@ -1,0 +1,220 @@
+--Desktop
+
+slc = 0  -- sets the colours
+tBarC = 2048
+tBartC = 1
+backColor = 1
+term.setBackgroundColor(backColor)
+term.clear()
+contextX = 0
+contextY = 0
+
+function drawPrograms()
+ term.setTextColor(1)
+ term.setBackgroundColor(8)
+ term.setCursorPos(16,2)
+ print("          ")
+ term.setCursorPos(16,3)
+ print(" -Help    ")
+ term.setCursorPos(16,4)
+ print(" -Games   ")
+ term.setCursorPos(16,5)
+ print(" -Request ")
+ term.setCursorPos(16,6)
+ print("          ")
+end
+
+function drawPrograms2()
+ term.setTextColor(1)
+ term.setBackgroundColor(8)
+ term.setCursorPos(16,2)
+ print("          ")
+ term.setCursorPos(16,3)
+ print(" -Help    ")
+ term.setCursorPos(16,4)
+ print(" >Games   ")
+ term.setCursorPos(16,5)
+ print("          ")
+end
+
+
+function drawGames()
+ term.setTextColor(1)
+ term.setBackgroundColor(8)
+ term.setCursorPos(26,3)
+ print("             ")
+ term.setCursorPos(26,4)
+ print(" -GoldRunner ")
+ term.setCursorPos(26,5)
+ print(" -3D Maze    ")
+ term.setCursorPos(26,6)
+ print(" -Worm       ")
+ term.setCursorPos(26,7)
+ print("             ")
+end
+
+function titleBar()  -- Draws the task bar at the top of the page
+  term.setCursorPos(1,1)
+  local w = term.getSize()
+  term.setBackgroundColor(tBarC)
+  term.setTextColor(tBartC)
+  term.clearLine()
+  term.setCursorPos(3, 1)
+  print("[Main Menu]")
+  term.setCursorPos(16, 1)
+  print("[Programs]")
+  term.setCursorPos(28, 1)
+  print("[BlueTooth]")
+  
+  clock() 
+end
+
+function drawBluetoothDropDown()  --Draws the bluetooth dropdown
+ term.setTextColor(1)
+ term.setBackgroundColor(8)
+ term.setCursorPos(28,2)
+ print("           ")
+ term.setCursorPos(28,3)
+ print(" -Send     ")
+ term.setCursorPos(28,4)
+ print(" -Recieve  ")
+ term.setCursorPos(28,5)
+ print("           ")
+end
+
+function clock()  -- sets the time to top left corner
+ term.setTextColor(1)
+ term.setBackgroundColor(tBarC)
+ local time = textutils.formatTime(os.time(), true)
+ local w = term.getSize()
+ term.setCursorPos(w - #time + 1, 1)
+ print(time)
+end
+
+function drawDesktop() -- Draws background image
+  term.setBackgroundColor(backColor)
+  term.clear()
+  bground = paintutils.loadImage("background_1")
+  paintutils.drawImage(bground,1, 1)
+  titleBar()
+end
+
+
+
+function drawMenu1() --Draws the main menu drop down.
+ term.setTextColor(1)
+ term.setBackgroundColor(8)
+ term.setCursorPos(3,2)
+ print("           ")
+ term.setCursorPos(3,3)
+ print(" -Shutdown ")
+ term.setCursorPos(3,4)
+ print(" -Restart  ")
+ term.setCursorPos(3,5)
+ print(" -Exit     ")
+ term.setCursorPos(3,6)
+ print("           ")
+end
+
+function drawMenu2()  -- Draws the left click edi menu
+ term.setBackgroundColor(8)
+ term.setTextColor(1)
+ term.setCursorPos(contextX, contextY)
+ print("              ")
+ term.setCursorPos(contextX, contextY+1)
+ print(" -Edit GUI    ")
+ term.setCursorPos(contextX, contextY+2)
+ print(" -Background  ")
+ term.setCursorPos(contextX, contextY+3)
+ print("              ")
+end
+
+drawDesktop() -- buttons and there functions
+while true do
+local event, button, X, Y = os.pullEventRaw() 
+local w = term.getSize()
+  if slc == 0 then
+    if event == "mouse_click" then
+      if X >=3 and X <=13 and Y==1 and button ==1 then
+      drawMenu1()
+      slc = 1
+        elseif X >=16 and X <=26 and Y >=1 and Y <=1 and button == 1 then slc = 4
+        drawPrograms()
+        elseif X >=24 and X <=34 and Y >=1 and Y <=1 and button == 1 then slc = 3
+        drawBluetoothDropDown()
+        slc = 0
+          elseif X >= 1 and Y >=2 and button == 2 then slc = 2
+            if X >=38 then
+            contextX = 38
+            end
+            if Y >=14 then
+            contextY = 14
+            end
+            if X <= 38 then
+            contextX = X
+            end
+            if Y <= 14 then
+            contextY = Y
+            end
+            drawMenu2()
+        else
+        drawDesktop()
+      end
+    end
+   elseif slc == 4 then
+     if X >=16 and X <=26 and button == 1 and Y== 3 then slc = 0 
+       shell.run("help")
+     elseif X >=16 and X <=26 and button == 1 and Y== 4 then slc = 0 
+       drawGames()
+       drawPrograms2() slc = 5
+       else
+       slc = 0
+       drawDesktop()    
+     end
+   elseif slc == 3 then
+     if X >=1 and X <=11 and button == 1 and Y== 3 then slc = 0 
+       else
+       slc = 0
+       drawDesktop()    
+     end
+   elseif slc == 1 then --main menu
+     if X >=1 and X <=11 and button == 1 and Y== 3 then slc = 0 
+       os.shutdown()
+       elseif X>=1 and X<=11 and Y==4 and button ==1 then slc = 0
+       os.reboot()
+       elseif X>=1 and X<=11 and Y==5 and button ==1 then slc = 0
+         term.setBackgroundColor(32768)
+         term.clear()
+         term.setCursorPos(1,1)
+         break
+       else
+       slc = 0
+       drawDesktop()    
+     end
+   elseif slc == 5 then --games
+     if X >=26 and X <=39 and button == 1 and Y== 4 then slc = 0 
+       shell.run("cd", "goldrunner")
+       shell.run("GoldRunner")
+      elseif X >=26 and X <=39 and button == 1 and Y== 5 then slc = 0
+       shell.run("maze3d")
+      elseif X >=26 and X <=39 and button == 1 and Y== 6 then slc = 0
+       term.clear()
+       term.setBackgroundColour(32768)
+       shell.run("worm")
+       else
+       slc = 0
+       drawDesktop()    
+     end
+  elseif slc == 2 then
+        if X >= contextX and X <= contextX+13 and Y==contextY+1 and button == 1 then slc = 0
+        sleep(0.1)
+        shell.run("edit","gui")
+        drawDesktop()
+          elseif X>= contextX and X <=contextX+13 and Y==contextY+2 and button == 1 then slc = 0
+            shell.run("paint","background_1")
+            drawDesktop()
+              else slc = 0
+              drawDesktop()
+            end
+  end
+ end
